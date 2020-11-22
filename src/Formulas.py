@@ -32,7 +32,7 @@ class Atom(Formula):
 	def numberOfAtoms(self):
 		return 1
 
-	def numberOfConectives(self):
+	def numberOfConnectives(self):
 		return 0
 
 
@@ -64,8 +64,8 @@ class Not(Formula):
 	def numberOfAtoms(self):
 		return self.inner.numberOfAtoms()
 
-	def numberOfConectives(self):
-		return 1 + self.inner.numberOfConectives()
+	def numberOfConnectives(self):
+		return 1 + self.inner.numberOfConnectives()
 
 
 class BinaryFormula(Formula):
@@ -98,8 +98,8 @@ class BinaryFormula(Formula):
 	def numberOfAtoms(self):
 		return self.left.numberOfAtoms() + self.right.numberOfAtoms()
 
-	def numberOfConectives(self):
-		return 1 + self.left.numberOfConectives() + self.right.numberOfConectives()
+	def numberOfConnectives(self):
+		return 1 + self.left.numberOfConnectives() + self.right.numberOfConnectives()
 
 
 class And(BinaryFormula):
@@ -129,8 +129,8 @@ class And(BinaryFormula):
 	def numberOfAtoms(self):
 		return super().numberOfAtoms()
 
-	def numberOfConectives(self):
-		return super().numberOfConectives()
+	def numberOfConnectives(self):
+		return super().numberOfConnectives()
 
 
 class Or(BinaryFormula):
@@ -160,8 +160,8 @@ class Or(BinaryFormula):
 	def numberOfAtoms(self):
 		return super().numberOfAtoms()
 
-	def numberOfConectives(self):
-		return super().numberOfConectives()
+	def numberOfConnectives(self):
+		return super().numberOfConnectives()
 
 
 class Implies(BinaryFormula):
@@ -191,5 +191,5 @@ class Implies(BinaryFormula):
 	def numberOfAtoms(self):
 		return super().numberOfAtoms()
 
-	def numberOfConectives(self):
-		return super().numberOfConectives()
+	def numberOfConnectives(self):
+		return super().numberOfConnectives()

@@ -6,13 +6,13 @@ def main():
 	atom3 = Atom("s")
 	notAtom2 = Not(atom2)
 	implies = Implies(atom1, notAtom2)
-	orConective = Or(implies, atom1)
-	andConective = And(orConective, atom3)
+	orConnective = Or(implies, atom1)
+	andConnective = And(orConnective, atom3)
 
-	print(andConective)
-	print(andConective.atoms())
-	print(andConective.numberOfAtoms())
-	print(andConective.numberOfConectives())
+	print(andConnective)
+	print(andConnective.atoms())
+	print(andConnective.numberOfAtoms())
+	print(andConnective.numberOfConnectives())
 
 if __name__ == "__main__":
 	main()
