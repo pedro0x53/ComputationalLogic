@@ -35,6 +35,10 @@ class Atom(Formula):
 	def numberOfConnectives(self):
 		return 0
 
+	def replace(self, old, new):
+		if self == old:
+			self.name = new.name
+
 
 class Not(Formula):
 	unicodeString = u"\u00ac"
@@ -45,6 +49,9 @@ class Not(Formula):
 
 	def __str__(self):
 		return  self.unicodeString + "(" + self.inner.__str__() + ")"
+
+	def __eq__(self, other):
+		return isinstance(other, Not) and other.inner == self.inner
 
 	def __hash__(self):
 		return hash((hash(self.inner), "not"))
@@ -66,6 +73,10 @@ class Not(Formula):
 
 	def numberOfConnectives(self):
 		return 1 + self.inner.numberOfConnectives()
+
+	def replace(self, old, new):
+		if self != old:
+			self.inner.replace(old, new)
 
 
 class BinaryFormula(Formula):
@@ -101,6 +112,18 @@ class BinaryFormula(Formula):
 	def numberOfConnectives(self):
 		return 1 + self.left.numberOfConnectives() + self.right.numberOfConnectives()
 
+	def replace(self, old, new):
+		if self != old:
+			if self.left == old:
+				self.left = new
+			else:
+				self.left.replace(old, new)
+
+			if self.right == old:
+				self.right = new
+			else:
+				self.right.replace(old, new)
+
 
 class And(BinaryFormula):
 	unicodeString = u"\u2227"
@@ -131,6 +154,9 @@ class And(BinaryFormula):
 
 	def numberOfConnectives(self):
 		return super().numberOfConnectives()
+
+	def replace(self, old, new):
+		super().replace(old, new)
 
 
 class Or(BinaryFormula):
@@ -163,6 +189,9 @@ class Or(BinaryFormula):
 	def numberOfConnectives(self):
 		return super().numberOfConnectives()
 
+	def replace(self, old, new):
+		super().replace(old, new)
+
 
 class Implies(BinaryFormula):
 	unicodeString = u"\u2192"
@@ -193,3 +222,6 @@ class Implies(BinaryFormula):
 
 	def numberOfConnectives(self):
 		return super().numberOfConnectives()
+
+	def replace(self, old, new):
+		super().replace(old, new)

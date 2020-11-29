@@ -1,18 +1,11 @@
 from Formulas import *
 
 def main():
-	atom1 = Atom("p")
-	atom2 = Atom("q")
-	atom3 = Atom("s")
-	notAtom2 = Not(atom2)
-	implies = Implies(atom1, notAtom2)
-	orConnective = Or(implies, atom1)
-	andConnective = And(orConnective, atom3)
+	formula = Implies(And(Atom("p"), Not(Atom("q"))), Atom("r"))
+	print(formula)
+	formula.replace(Not(Atom("q")), Or(Atom("r"), Atom("t")))
+	print(formula)
 
-	print(andConnective)
-	print(andConnective.atoms())
-	print(andConnective.numberOfAtoms())
-	print(andConnective.numberOfConnectives())
 
 if __name__ == "__main__":
 	main()
