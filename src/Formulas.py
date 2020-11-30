@@ -35,9 +35,8 @@ class Atom(Formula):
 	def numberOfConnectives(self):
 		return 0
 
-	def replace(self, old, new):
-		if self == old:
-			self.name = new.name
+	def clone(self):
+		return Atom(self.name[:])
 
 
 class Not(Formula):
@@ -48,7 +47,7 @@ class Not(Formula):
 		self.inner = inner
 
 	def __str__(self):
-		return  self.unicodeString + "(" + self.inner.__str__() + ")"
+		return Not.unicodeString + self.inner.__str__()
 
 	def __eq__(self, other):
 		return isinstance(other, Not) and other.inner == self.inner
@@ -60,7 +59,7 @@ class Not(Formula):
 		return 1 + len(self.inner)
 
 	def subformula(self):
-		return {str(self)}.union(inner.subformula())
+		return {str(self)}.union(self.inner.subformula())
 
 	def atoms(self):
 		return self.inner.atoms()
@@ -74,12 +73,12 @@ class Not(Formula):
 	def numberOfConnectives(self):
 		return 1 + self.inner.numberOfConnectives()
 
-	def replace(self, old, new):
-		if self != old:
-			self.inner.replace(old, new)
+	def clone(self):
+		return Not(self.inner.clone())
 
 
 class BinaryFormula(Formula):
+
 	def __init__(self, left, right):
 		super().__init__()
 		self.left = left
@@ -112,33 +111,25 @@ class BinaryFormula(Formula):
 	def numberOfConnectives(self):
 		return 1 + self.left.numberOfConnectives() + self.right.numberOfConnectives()
 
-	def replace(self, old, new):
-		if self != old:
-			if self.left == old:
-				self.left = new
-			else:
-				self.left.replace(old, new)
-
-			if self.right == old:
-				self.right = new
-			else:
-				self.right.replace(old, new)
+	def clone(self):
+		return BinaryFormula(self.left.clone(), self.right.clone())
 
 
 class And(BinaryFormula):
+	identifier = "and"
 	unicodeString = u"\u2227"
 
 	def __init__(self, left, right):
 		super().__init__(left, right)
 
 	def __str__(self):
-		return super().__str__(self.unicodeString)
+		return super().__str__(And.unicodeString)
 
 	def __eq__(self, other):
 		return isinstance(other, And) and super().__eq__(other)
 
 	def __hash__(self):
-		return super().__hash__("and")
+		return super().__hash__(And.identifier)
 
 	def subformula(self):
 		return super().subformula()
@@ -155,24 +146,25 @@ class And(BinaryFormula):
 	def numberOfConnectives(self):
 		return super().numberOfConnectives()
 
-	def replace(self, old, new):
-		super().replace(old, new)
+	def clone(self):
+		return And(self.left.clone(), self.right.clone())
 
 
 class Or(BinaryFormula):
+	identifier = "or"
 	unicodeString = u"\u2228"
 
 	def __init__(self, left, right):
 		super().__init__(left, right)
 
 	def __str__(self):
-		return super().__str__(self.unicodeString)
+		return super().__str__(Or.unicodeString)
 
 	def __eq__(self, other):
 		return isinstance(other, Or) and super().__eq__(other)
 
 	def __hash__(self):
-		return super().__hash__("or")
+		return super().__hash__(Or.identifier)
 
 	def subformula(self):
 		return super().subformula()
@@ -189,24 +181,25 @@ class Or(BinaryFormula):
 	def numberOfConnectives(self):
 		return super().numberOfConnectives()
 
-	def replace(self, old, new):
-		super().replace(old, new)
+	def clone(self):
+		return Or(self.left.clone(), self.right.clone())
 
 
 class Implies(BinaryFormula):
+	identifier = "implies"
 	unicodeString = u"\u2192"
 
 	def __init__(self, left, right):
 		super().__init__(left, right)
 
 	def __str__(self):
-		return super().__str__(self.unicodeString)
+		return super().__str__(Implies.unicodeString)
 
 	def __eq__(self, other):
 		return isinstance(other, Implies) and super().__eq__(other)
 
 	def __hash__(self):
-		return super().__hash__("implies")
+		return super().__hash__(Implies.identifier)
 
 	def subformula(self):
 		return super().subformula()
@@ -223,5 +216,5 @@ class Implies(BinaryFormula):
 	def numberOfConnectives(self):
 		return super().numberOfConnectives()
 
-	def replace(self, old, new):
-		super().replace(old, new)
+	def clone(self):
+		return Implies(self.left.clone(), self.right.clone())
