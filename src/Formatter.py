@@ -14,7 +14,6 @@ class Formatter:
         if isinstance(formula, Not):
             return Not(self.replace(formula.inner, old, new))
 
-
         if isinstance(formula, And):
             return And(self.replace(formula.left, old, new), self.replace(formula.right, old, new))
 
