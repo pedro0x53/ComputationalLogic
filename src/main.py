@@ -1,17 +1,34 @@
 from Formulas import *
 from Formatter import *
+from Evaluator import *
 
 def main():
 
-	formatter = Formatter()
+	definition = {
+					"p": True,
+					"q": False
+				}
 
-	formula = Implies(And(Atom("p"), Not(Atom("q"))), Atom("r"))
-	print("Formula: ", formula)
-	print("Formatted Formula: ", formatter.replace(formula, Not(Atom("q")), Or(Atom("r"), Atom("t"))))
+	evaluator = Evaluator(definition)
 
-	atom = Atom("j")
-	print(atom)
-	print(formatter.replace(atom, Atom("j"), Not(Implies(Atom("a"), Atom("b")))))
+	atomP = Atom("p")
+	atomQ = Atom("q")
+	atomR = Atom("r")
+
+	formula1 = Not(atomR) 			 # ~r
+	formula2 = And(atomP, atomQ) 	 # p ^ q
+	formula3 = Or(atomP, atomR) 	 # p v r
+	formula4 = And(atomP, atomR) 	 # p ^ r
+	formula5 = Implies(atomP, atomR) # p -> r
+	formula6 = Implies(atomR, atomP) # r -> p
+
+	print(evaluator.truthValueOf(formula1))
+	print(evaluator.truthValueOf(formula2))
+	print(evaluator.truthValueOf(formula3))
+	print(evaluator.truthValueOf(formula4))
+	print(evaluator.truthValueOf(formula5))
+	print(evaluator.truthValueOf(formula6))
+
 
 
 if __name__ == "__main__":
