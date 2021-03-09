@@ -1,33 +1,21 @@
 from Formulas import *
 from Evaluator import *
+from CNF import *
 
 def main():
-	evaluator = Evaluator()
+	cnf = CNF()
 
-	atomP = Atom("p")
-	atomQ = Atom("q")
-	atomR = Atom("r")
-	atomR = Atom("r")
+	# a -> (b v c) ^ (b v c) -> d ^ ~(a -> d)
+	a = Atom('a')
+	b = Atom('b')
+	c = Atom('c')
+	d = Atom('d')
 
-	formula1 = Not(atomR) 			  # ~r
-	formula2 = And(atomP, atomQ) 	  # p ^ q
-	formula3 = Or(atomP, atomR) 	  # p v r
-	formula4 = Implies(atomP, atomR)  # p -> r
-	formula5 = And(atomP, Not(atomP)) # p ^ ~p
+	formula = And(Implies(a, Or(b, c)), And(Implies(Or(b, c), d), Not(Implies(a, d))))
 
-	atomSatisfability = evaluator.satisfability(atomP, mode=Evaluator.satisfactory)
-	notSatisfability = evaluator.satisfability(formula1, mode=Evaluator.satisfactory)
-	andSatisfability = evaluator.satisfability(formula2, mode=Evaluator.satisfactory)
-	orDoubleSatisfactory = evaluator.satisfability(formula3, mode=Evaluator.doubleSatisfactory)
-	impliesAllModels = evaluator.satisfability(formula4, mode=Evaluator.allModels)
-	unsatisfactory = evaluator.satisfability(formula5, mode=Evaluator.satisfactory)
+	print(cnf.formulaToCNFFormula(formula))
 
-	print(atomSatisfability)
-	print(notSatisfability)
-	print(andSatisfability)
-	print(orDoubleSatisfactory)
-	print(impliesAllModels)
-	print(unsatisfactory)
+	print(cnf.satisfiability('CNF Files/Samples/L9Q1.cnf'))
 
 
 if __name__ == "__main__":
