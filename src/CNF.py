@@ -34,9 +34,6 @@ class CNF:
 	def isValid(self, filePath):
 		clauses = self.readCNFFile(filePath)
 		for clause in clauses:
-			if len(clause) == 1:
-				continue
-
 			for literal in clause:
 				if (literal * -1) not in clause:
 					return False
