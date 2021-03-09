@@ -33,22 +33,15 @@ class CNF:
 
 	def isValid(self, filePath):
 		clauses = self.readCNFFile(filePath)
+		isValid = False
 		for clause in clauses:
 			for literal in clause:
-				if (literal * -1) not in clause:
-					return False
-		return True
-
-
-	def isValid(self, formula):
-		for clause in clauses:
-			if len(clause) == 1:
-				continue
-
-			for literal in clause:
-				if Not(literal) not in clause:
-					return False
-		return True
+				if (literal * -1) in clause:
+					isValid = True
+					break
+				else:
+					isValid = isValid or False
+		return isValid
 
 
 	def CNFFileToFormula(self, filePath):
@@ -92,7 +85,7 @@ class CNF:
 		return formula
 
 
-	def formulaToCNFClauses(self, formula):
+	def __formulaToCNFClauses(self, formula):
 		pass
 		# cnfFormula = self.formulaToCNFFormula(formula)
 		# clauses = set()
@@ -181,28 +174,30 @@ class CNF:
 					clauses.remove(clause)
 					continue
 					
-				resolutionRuleCount = 0
+				trivialLiteral = None
 				for literal in currentClause:
 					if (literal * -1) in clause:
-						resolutionRuleCount += 1
-						if resolutionRuleCount > 1:
+						if trivialLiteral is not None
+							trivialLiteral = literal
+						else:
+							trivialLiteral = None
 							break
 
-				if resolutionRuleCount == 1:
-					for literal in currentClause:
-						if (literal * -1) in clause:
-							currentClauseCopy = set(currentClause)
-							currentClauseCopy.remove(literal)
+				if trivialLiteral is not None:
+					currentClauseCopy = set(currentClause)
+					currentClauseCopy.remove(trivialLiteral)
 
-							clauseCopy = set(clause)
-							clauseCopy.remove((literal * -1))
+					clauseCopy = set(clause)
+					clauseCopy.remove((trivialLiteral * -1))
 
-							newClause = frozenset(currentClauseCopy.union(clauseCopy))
+					newClause = frozenset(currentClauseCopy.union(clauseCopy))
 
-							if not len(newClause):
-								return False
+					if not len(newClause):
+						return False
 
-							clauses.append(newClause)
+					if newClause not in clauses:
+						clauses.append(newClause)
+
 		if not len(clauses):
 			return clauses
 		
@@ -217,16 +212,6 @@ class CNF:
 			return False
 
 		return clauses
-
-
-	# def satisfiability(self, formula):
-	# 	clauses = self.formulaToCNFClauses(formula)
-	# 	clauses = self.__resolutionMethod(clauses)
-
-	# 	if not clauses:
-	# 		return False
-
-	# 	return clauses
 
 
 	def __isTrivialClause(self, clause):
