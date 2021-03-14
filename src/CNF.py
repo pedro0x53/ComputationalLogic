@@ -33,15 +33,15 @@ class CNF:
 
 	def isValid(self, filePath):
 		clauses = self.readCNFFile(filePath)
-		isValid = False
 		for clause in clauses:
+			isValid = False
 			for literal in clause:
 				if (literal * -1) in clause:
 					isValid = True
 					break
-				else:
-					isValid = isValid or False
-		return isValid
+			if not isValid:
+				return False
+		return True
 
 
 	def CNFFileToFormula(self, filePath):
@@ -87,13 +87,6 @@ class CNF:
 
 	def __formulaToCNFClauses(self, formula):
 		pass
-		# cnfFormula = self.formulaToCNFFormula(formula)
-		# clauses = set()
-
-		# subformulas = cnfFormula.subformulas()
-		# for formula in subformulas:
-		# 	if isinstance(formula, Or):
-		
 
 
 	def formulaToCNFFormula(self, formula):
@@ -162,14 +155,18 @@ class CNF:
 		return formula
 
 
-	def __resolutionMethod(self, clauses):
-		clauses = list(clauses)
+	def resolutionMethod(self, filePath):
+		clauses = list(self.readCNFFile(filePath))
+
 		for currentClause in clauses:
 			if self.__isTrivialClause(currentClause):
 				clauses.remove(currentClause)
 				continue
 
 			for clause in clauses:
+				if currentClause == clause:
+					continue
+
 				if self.__isTrivialClause(clause):
 					clauses.remove(clause)
 					continue
@@ -177,7 +174,7 @@ class CNF:
 				trivialLiteral = None
 				for literal in currentClause:
 					if (literal * -1) in clause:
-						if trivialLiteral is not None
+						if trivialLiteral is None:
 							trivialLiteral = literal
 						else:
 							trivialLiteral = None
@@ -198,20 +195,15 @@ class CNF:
 					if newClause not in clauses:
 						clauses.append(newClause)
 
-		if not len(clauses):
-			return clauses
+		if len(clauses) > 0:
+			res = list()
+			for clause in clauses:
+				if len(clause) == 1:
+					res.append(list(clause)[0])
+
+			return res
 		
 		return True
-
-
-	def satisfiability(self, filePath):
-		clauses = self.readCNFFile(filePath)
-		clauses = self.__resolutionMethod(clauses)
-
-		if not clauses:
-			return False
-
-		return clauses
 
 
 	def __isTrivialClause(self, clause):
