@@ -1,21 +1,13 @@
-from Formulas import *
-from Evaluator import *
-from CNF import *
+from FOLFormulas import *
 
 def main():
-	cnf = CNF()
+	p = Atom('P', 'x')
+	r = Atom('R', 'x')
 
-	# (a -> (b v c)) ^ (c -> d) ^ ~d ^ ~b
-	a = Atom('a')
-	b = Atom('b')
-	c = Atom('c')
-	d = Atom('d')
+	formula = Implies(ForAll("x", p), Or(p, r))
 
-	# formula = And(And(Implies(a, Or(b, c)), Implies(c, d)), And(Not(b), Not(d)))
-
-	# print(cnf.formulaToCNFFormula(formula))
-
-	print(cnf.resolutionMethod('CNF Files/Samples/L9Q6.cnf'))
+	print(formula)
+	print(formula.subformulas())
 
 
 if __name__ == "__main__":
