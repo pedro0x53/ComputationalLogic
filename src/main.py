@@ -1,13 +1,11 @@
-from FOLFormulas import *
+from Formulas import *
+from DPLL import *
 
 def main():
-	p = Atom('P', 'x')
-	r = Atom('R', 'x')
 
-	formula = Implies(ForAll("x", p), Or(p, r))
+	dpll = DPLL()
 
-	print(formula)
-	print(formula.subformulas())
+	print("Result:", dpll.runFromFile("CNF Files/Unsatisfactory/uuf50-01.cnf"))
 
 
 if __name__ == "__main__":

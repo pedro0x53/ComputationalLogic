@@ -46,10 +46,10 @@ class CNF:
 
 	def CNFFileToFormula(self, filePath):
 		clauses = self.readCNFFile(filePath)
-		return self.__CNFClausesToFormula(clauses)
+		return self.CNFClausesToFormula(clauses)
 
 
-	def __CNFClausesToFormula(self, clauses):
+	def CNFClausesToFormula(self, clauses):
 		formula = None
 
 		for clause in clauses:
@@ -85,8 +85,49 @@ class CNF:
 		return formula
 
 
-	def __formulaToCNFClauses(self, formula):
-		pass
+	def formulaToCNFClauses(self, formula):
+		# get every atoms as string
+		atoms = formula.atoms()
+
+		# generate a enumerated dictionary from atoms set
+		literalsToAtoms = dict(enumerate(atoms, 1))
+
+		# get the reverse reference (key:value -> value:key)
+		atomsToLiterals = {v: k for k, v in literalsToAtoms.items()}
+
+		# transform formula to CNF format
+		cnfFormula = self.formulaToCNFFormula(formula)
+
+		# get the cnf formated formula as string
+		cnfFormulaString = str(cnfFormula)
+
+		# remove every parenthesis
+		cnfFormulaString = cnfFormulaString.replace(")", "").replace("(", "")
+
+		# Separete every clause by spliting on And string
+		clausesStringGrouped = cnfFormulaString.split(u"\u2227")
+
+		alphaClauses = set()
+		# Separete every literal by spliting on Or string
+		for clauseString in clausesStringGrouped:
+			clauseSplited = clauseString.split(u"\u2228")
+			newAlphaClause = frozenset([alphaLiteral.strip() for alphaLiteral in clauseSplited])
+
+			alphaClauses.add(newAlphaClause)
+		
+		clauses = set()
+		for alphaClause in alphaClauses:
+			clause = set()
+			for atom in alphaClause:
+				if atom[0] == Not.unicodeString:
+					clause.add(atomsToLiterals.get(atom[1:]) * -1)
+				else:
+					clause.add(atomsToLiterals.get(atom))
+
+			clauses.add(frozenset(clause))
+
+		return {"relation": literalsToAtoms, "clauses": clauses}
+
 
 
 	def formulaToCNFFormula(self, formula):
@@ -153,73 +194,3 @@ class CNF:
 			return Or(self.__distributive(formula.left), self.__distributive(formula.right))
 
 		return formula
-
-
-	def resolutionMethod(self, filePath):
-		clauses = list(self.readCNFFile(filePath))
-
-		for currentClause in clauses:
-			if self.__isTrivialClause(currentClause):
-				clauses.remove(currentClause)
-				continue
-
-			for clause in clauses:
-				if currentClause == clause:
-					continue
-
-				if self.__isTrivialClause(clause):
-					clauses.remove(clause)
-					continue
-					
-				trivialLiteral = None
-				for literal in currentClause:
-					if (literal * -1) in clause:
-						if trivialLiteral is None:
-							trivialLiteral = literal
-						else:
-							trivialLiteral = None
-							break
-
-				if trivialLiteral is not None:
-					currentClauseCopy = set(currentClause)
-					currentClauseCopy.remove(trivialLiteral)
-
-					clauseCopy = set(clause)
-					clauseCopy.remove((trivialLiteral * -1))
-
-					newClause = frozenset(currentClauseCopy.union(clauseCopy))
-
-					if not len(newClause):
-						return False
-
-					if newClause not in clauses:
-						clauses.append(newClause)
-
-		if len(clauses) > 0:
-			res = list()
-			for clause in clauses:
-				if len(clause) == 1:
-					res.append(list(clause)[0])
-
-			return res
-		
-		return True
-
-
-	def __isTrivialClause(self, clause):
-		for literal in clause:
-			if (literal * -1) in clause:
-				return True
-		return False
-
-
-
-		
-
-
-
-
-
-
-
-
