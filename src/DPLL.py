@@ -15,7 +15,12 @@ class DPLL:
 		relationAndClauses = self.cnf.formulaToCNFClauses(formula)
 		relation = relationAndClauses.get("relation")
 		clauses = relationAndClauses.get("clauses")
+
 		result = self.__dpllRecursion(clauses, set())
+
+		if not result:
+			return result
+
 		valuation = dict()
 		for literal in result:
 			if literal > 0:
@@ -47,15 +52,17 @@ class DPLL:
 
 
 	def __unitPropagation(self, clauses, valuation):
-		clauses = list(clauses)
-
 		unitaryClause = self.__getUnitaryClause(clauses)
-		toRemove = set()
-		newCalsues = set()
 
 		while unitaryClause is not None:
-			valuation = valuation.union(set(unitaryClause))
+			clauses.remove(unitaryClause)
+
+			valuation = valuation.union(unitaryClause)
+
 			literal = list(unitaryClause)[0]
+
+			toRemove = set()
+			newCalsues = set()
 
 			for clause in clauses:
 				if literal in clause:
@@ -64,18 +71,22 @@ class DPLL:
 				
 				inversedLiteral = literal * -1
 				if inversedLiteral in clause:
+					# print(literal)
 					newClause = clause.difference({inversedLiteral})
+					# print(clause, newClause)
 					newCalsues.add(frozenset(newClause))
 					if len(newClause) == 0:
-						return set(clauses), valuation
+						clauses = clauses.difference(toRemove).union(newCalsues)						
+						return clauses, valuation
 
-			clauses = list(set(clauses).difference(toRemove).union(newCalsues))
+			clauses = clauses.difference(toRemove).union(newCalsues)
+
 			toRemove.clear()
 			newCalsues.clear()
 
 			unitaryClause = self.__getUnitaryClause(clauses)
 
-		return set(clauses), valuation
+		return clauses, valuation
 
 
 	def __getUnitaryClause(self, clauses):
