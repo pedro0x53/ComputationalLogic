@@ -4,13 +4,13 @@ class FOLFormula:
 
 
 class Atom(FOLFormula):
-	def __init__(self, name, *args):
+	def __init__(self, name, args):
 		super().__init__()
 		self.name = name
 		self.args = list(args)
 
 	def __str__(self):
-		return str(self.name) + "(" + ", ".join([str(arg) for arg in self.args]) + ")"
+		return str(self.name) + "(" + ", ".join((str(arg) for arg in self.args)) + ")"
 
 	def __eq__(self, other):
 		return isinstance(other, Atom) and other.name == self.name

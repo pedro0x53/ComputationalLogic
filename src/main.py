@@ -1,11 +1,33 @@
-from Formulas import *
-from DPLL import *
+from FOLFormulas import *
+from FOLTerms import *
+from FOLEvaluator import *
 
 def main():
+	domain = {Const("a"), Const("b")}
+	evaluator = FOLEvaluator(domain)
 
-	dpll = DPLL()
+	definition = {
+		"constants": {
+			"a": "João Pedro",
+			"b": "Marco Antônio"
+		},
+		"functions": {
+			"initials": {
+				"(João Pedro)": "J.P.",
+				"(Marco Antônio)": "M.A."
+			}
+		},
+		"predicates": {
+			"I": set([tuple(["J.P."])])
+		}
+	}
 
-	print("Result:", dpll.runFromFile("CNF Files/Unsatisfactory/uuf50-01.cnf"))
+	p = Atom("I", [Func("initials", "x")])
+
+	formula = ThereExists("x", p)
+	print(formula)
+
+	print(evaluator.truthValueOf(formula, definition))
 
 
 if __name__ == "__main__":
