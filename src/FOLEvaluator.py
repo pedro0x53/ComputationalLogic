@@ -5,7 +5,7 @@ class FOLEvaluator:
 
 	def __init__(self, domain):
 		try:
-			if not domain:
+			if not len(domain):
 				raise ValueError
 			self.domain = domain
 			self.formatter = FOLFormatter()
@@ -16,9 +16,7 @@ class FOLEvaluator:
 
 	def truthValueOf(self, formula, definition):
 		if isinstance(formula, Atom):
-			a = tuple([arg.apply(definition) for arg in formula.args])
-			print(a)
-			return a in definition.get("predicates").get(formula.name)
+			return tuple([arg.apply(definition) for arg in formula.args]) in definition.get("predicates").get(formula.name)
 
 		if isinstance(formula, Not):
 			return not self.truthValueOf(formula.inner, definition) if self.truthValueOf(formula.inner, definition) != None else None

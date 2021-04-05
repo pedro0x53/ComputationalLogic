@@ -15,18 +15,21 @@ def main():
 			"initials": {
 				"(João Pedro)": "J.P.",
 				"(Marco Antônio)": "M.A."
+			},
+			"height": {
+				"(João Pedro)": 170,
+				"(Marco Antônio)": 160,
 			}
 		},
 		"predicates": {
-			"I": set([tuple(["J.P."])])
+			"I": set([tuple(["J.P.", 170]), tuple(["M.A.", 160])])
 		}
 	}
 
-	p = Atom("I", [Func("initials", "x")])
+	p = Atom("I", [Func("initials", "x"), Func("height", "x")])
 
-	formula = ThereExists("x", p)
+	formula = ForAll("x", p)
 	print(formula)
-
 	print(evaluator.truthValueOf(formula, definition))
 
 
